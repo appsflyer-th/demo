@@ -1,0 +1,93 @@
+/* Shared layout + navigation for Banking pages */
+
+.content-wrap {
+  width: min(var(--content-max, 1120px), calc(100% - (var(--content-gutter, 24px) * 2)));
+  margin-inline: auto;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 8px 0;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.nav-inner {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-brand img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+
+.brand-mark {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 44px;
+  line-height: 1;
+}
+
+.brand-title {
+  font-size: 1.95rem;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.brand-sub {
+  font-size: 0.56rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  color: #334155;
+}
+
+.nav-back {
+  font-size: 0.82rem;
+  color: var(--muted, #64748b);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-back:hover {
+  color: var(--nav-back-hover, var(--brand, var(--navy, #1a3c5e)));
+}
+
+@media (max-width: 767px) {
+  .brand-title { font-size: 1.82rem; }
+  .brand-sub { font-size: 0.52rem; }
+}
+
+/* Global footer for banking pages */
+.site-footer {
+  background: #0f2038;
+  color: #ffffff;
+  text-align: center;
+  padding: 14px 0 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.site-footer-copy {
+  font-size: 0.72rem;
+  opacity: 0.6;
+}

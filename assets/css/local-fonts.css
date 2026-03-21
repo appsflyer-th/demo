@@ -1,0 +1,40 @@
+/* Local-first font declarations (no external CDN request). */
+@font-face {
+  font-family: 'Manrope';
+  src: local('Manrope'), local('Manrope Regular');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: local('Space Grotesk'), local('SpaceGrotesk-Regular');
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: local('DM Sans'), local('DMSans-Regular');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Serif Display';
+  src: local('DM Serif Display'), local('DMSerifDisplay-Regular');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Syne';
+  src: local('Syne'), local('Syne Regular');
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}

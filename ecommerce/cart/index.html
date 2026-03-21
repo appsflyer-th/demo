@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <script src="../../assets/js/gtm-bootstrap.js" defer></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreshGrove – Your Cart</title>
+  <link rel="stylesheet" href="../../assets/css/local-fonts.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d6a4f; --green-dark: #1b4332; --green-light: #d8f3dc;
+      --yellow: #f7c948; --off: #f8faf8; --black: #0a0a0a; --gray: #6b7280; --white: #fff;
+      --red: #e74c3c;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--off); color: var(--black); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(248,250,248,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); text-decoration: none; }
+    .nav-back { font-size: 0.82rem; color: var(--gray); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .nav-back:hover { color: var(--green); }
+
+    /* LAYOUT */
+    .cart-layout {
+      max-width: 900px; margin: 0 auto; padding: 32px 20px 80px;
+      display: grid; grid-template-columns: 1fr; gap: 24px;
+    }
+    @media (min-width: 700px) { .cart-layout { grid-template-columns: 1fr 340px; align-items: start; } }
+
+    /* PAGE TITLE */
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      margin-bottom: 4px;
+    }
+    .page-sub { color: var(--gray); font-size: 0.9rem; margin-bottom: 24px; }
+
+    /* CART ITEMS */
+    .cart-items { display: flex; flex-direction: column; gap: 12px; }
+    .cart-item {
+      background: white; border-radius: 16px; padding: 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .item-emoji {
+      font-size: 2.4rem; width: 60px; height: 60px;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .item-apple  { background: #fde8e8; }
+    .item-banana { background: #fffde8; }
+    .item-peach  { background: #fef3e8; }
+
+    .item-details { flex: 1; }
+    .item-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; }
+    .item-price { font-size: 0.85rem; color: var(--gray); }
+
+    .item-qty-ctrl {
+      display: flex; align-items: center;
+      border: 1px solid rgba(0,0,0,0.1); border-radius: 100px;
+      overflow: hidden;
+    }
+    .iq-btn { width: 30px; height: 30px; border: none; background: none; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .iq-btn:hover { background: var(--green-light); }
+    .iq-val { min-width: 28px; text-align: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem; }
+
+    .item-total { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--green); min-width: 50px; text-align: right; }
+    .btn-remove { background: none; border: none; cursor: pointer; color: #ccc; font-size: 1rem; padding: 4px; border-radius: 6px; transition: color 0.15s; }
+    .btn-remove:hover { color: var(--red); }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 24px; background: white; border-radius: 20px; }
+    .empty-state .big-emoji { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h3 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+    .empty-state p { color: var(--gray); font-size: 0.9rem; margin-bottom: 20px; }
+    .btn-shop-now {
+      display: inline-block; padding: 12px 28px; border-radius: 100px;
+      background: var(--green); color: white; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    /* ORDER SUMMARY */
+    .summary-box { background: white; border-radius: 20px; padding: 24px; }
+    .summary-box h3 { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 20px; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+    .summary-row:last-of-type { border-bottom: none; }
+    .summary-total { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--green); }
+    .promo-input {
+      display: flex; gap: 8px; margin: 16px 0;
+    }
+    .promo-input input {
+      flex: 1; padding: 10px 14px; border-radius: 100px;
+      border: 1px solid rgba(0,0,0,0.1); font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+      outline: none;
+    }
+    .promo-input input:focus { border-color: var(--green); }
+    .btn-apply-promo {
+      padding: 10px 16px; border-radius: 100px;
+      background: var(--green-light); color: var(--green-dark);
+      border: none; cursor: pointer; font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+    }
+
+    .btn-checkout {
+      display: block; width: 100%;
+      padding: 16px; border-radius: 100px;
+      background: var(--green); color: white;
+      border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-top: 16px; transition: all 0.2s ease;
+    }
+    .btn-checkout:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .btn-continue-shopping {
+      display: block; width: 100%; text-align: center;
+      padding: 12px; border-radius: 100px;
+      background: transparent; color: var(--gray);
+      border: 1px solid rgba(0,0,0,0.1); text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-top: 10px; transition: all 0.2s;
+    }
+    .btn-continue-shopping:hover { border-color: var(--green); color: var(--green); }
+
+    .secure-badge { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.75rem; color: var(--gray); margin-top: 14px; }
+
+    /* FOOTER */
+    footer { background: var(--green-dark); color: white; padding: 48px 24px; text-align: center; }
+    .footer-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; margin-bottom: 8px; }
+    .footer-sub { opacity: 0.65; font-size: 0.9rem; margin-bottom: 32px; }
+    .qr-wrap { display: none; flex-direction: column; align-items: center; gap: 12px; }
+    @media (min-width: 768px) {
+      .qr-wrap { display: flex; }
+      .mobile-download-btns { display: none !important; }
+    }
+    .qr-box { width: 140px; height: 140px; background: white; border-radius: 12px; padding: 10px; display: flex; align-items: center; justify-content: center; }
+    .qr-box svg { width: 120px; height: 120px; }
+    .qr-label { font-size: 0.8rem; opacity: 0.7; }
+    .mobile-download-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn-download-app { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 100px; font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s ease; }
+    .btn-app-ios { background: white; color: var(--green-dark); }
+    .btn-app-android { background: var(--yellow); color: var(--black); }
+    .btn-download-app:hover { transform: translateY(-2px); opacity: 0.9; }
+    .footer-copy { margin-top: 32px; font-size: 0.72rem; opacity: 0.4; }
+
+    /* CONFIRMATION OVERLAY */
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 300;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .confirm-overlay.show { display: flex; }
+    .confirm-box {
+      background: white; border-radius: 24px; padding: 44px 36px; max-width: 400px; width: 100%;
+      text-align: center;
+      animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .confirm-box .big-check { font-size: 4rem; margin-bottom: 16px; }
+    .confirm-box h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 8px; }
+    .confirm-box p { color: var(--gray); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px; }
+    .btn-confirm-close {
+      padding: 12px 28px; border-radius: 100px;
+      background: var(--green); color: white;
+      border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54P6PTRS"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <a class="nav-brand" href="../">🌿 FreshGrove</a>
+  <a class="nav-back" href="../">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 4L3 7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Continue Shopping
+  </a>
+</nav>
+
+<div class="cart-layout">
+  <div>
+    <div class="page-title">Your Cart 🛒</div>
+    <div class="page-sub" id="cartSubtitle">Loading your items…</div>
+    <div class="cart-items" id="cartItems"></div>
+  </div>
+
+  <div>
+    <div class="summary-box" id="summaryBox">
+      <h3>Order Summary</h3>
+      <div class="summary-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="summary-row"><span>Delivery</span><span id="delivery">Free</span></div>
+      <div class="summary-row"><span>Discount</span><span id="discount" style="color: var(--green)">—</span></div>
+      <div class="summary-row"><span style="font-weight:700">Total</span><span class="summary-total" id="total">$0.00</span></div>
+      <div class="promo-input">
+        <input type="text" id="promoInput" placeholder="Promo code…" />
+        <button class="btn-apply-promo btn-apply-promo-code" onclick="applyPromo()">Apply</button>
+      </div>
+      <button class="btn-checkout btn-checkout-now" id="btn-checkout" onclick="checkout()">
+        Proceed to Checkout →
+      </button>
+      <a href="../" class="btn-continue-shopping btn-continue-shopping-link">Continue Shopping</a>
+      <div class="secure-badge">🔒 Secure checkout · 256-bit SSL</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-title">Checkout faster on the app 📱</div>
+  <div class="footer-sub">Saved payment methods, real-time tracking, and exclusive app discounts.</div>
+
+  <div class="qr-wrap">
+    <div class="qr-box">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="white"/>
+        <rect x="5" y="5" width="30" height="30" fill="black"/><rect x="9" y="9" width="22" height="22" fill="white"/><rect x="13" y="13" width="14" height="14" fill="black"/>
+        <rect x="65" y="5" width="30" height="30" fill="black"/><rect x="69" y="9" width="22" height="22" fill="white"/><rect x="73" y="13" width="14" height="14" fill="black"/>
+        <rect x="5" y="65" width="30" height="30" fill="black"/><rect x="9" y="69" width="22" height="22" fill="white"/><rect x="13" y="73" width="14" height="14" fill="black"/>
+        <rect x="40" y="5" width="5" height="5" fill="black"/><rect x="50" y="5" width="5" height="5" fill="black"/>
+        <rect x="40" y="15" width="5" height="5" fill="black"/><rect x="55" y="15" width="5" height="5" fill="black"/>
+        <rect x="40" y="25" width="10" height="5" fill="black"/>
+        <rect x="40" y="40" width="5" height="25" fill="black"/><rect x="50" y="40" width="5" height="5" fill="black"/>
+        <rect x="60" y="40" width="5" height="10" fill="black"/><rect x="80" y="40" width="15" height="5" fill="black"/>
+        <rect x="50" y="50" width="15" height="5" fill="black"/><rect x="55" y="60" width="5" height="5" fill="black"/>
+        <rect x="65" y="60" width="5" height="10" fill="black"/><rect x="75" y="60" width="10" height="5" fill="black"/>
+        <rect x="50" y="70" width="10" height="5" fill="black"/><rect x="80" y="70" width="15" height="10" fill="black"/>
+        <rect x="55" y="80" width="5" height="10" fill="black"/>
+        <rect x="5" y="40" width="5" height="20" fill="black"/><rect x="15" y="40" width="15" height="5" fill="black"/>
+        <rect x="25" y="50" width="10" height="5" fill="black"/><rect x="5" y="60" width="10" height="5" fill="black"/>
+        <rect x="5" y="70" width="5" height="5" fill="black"/><rect x="15" y="70" width="10" height="5" fill="black"/>
+        <rect x="25" y="65" width="5" height="15" fill="black"/><rect x="5" y="80" width="15" height="5" fill="black"/>
+      </svg>
+    </div>
+    <div class="qr-label">Scan to download FreshGrove App</div>
+  </div>
+
+  <div class="mobile-download-btns">
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-ios btn-download-ios-cart" id="btn-ios-cart">🍎 Download on App Store</a>
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-android btn-download-android-cart" id="btn-android-cart">🤖 Get it on Google Play</a>
+  </div>
+
+  <div class="footer-copy">© 2025 FreshGrove Demo</div>
+</footer>
+
+<!-- ORDER CONFIRMATION -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="big-check">🎉</div>
+    <h2>Order Placed!</h2>
+    <p>Your fresh groceries are on their way. Estimated delivery: <strong>Today, 3–6 PM</strong>.</p>
+    <button class="btn-confirm-close btn-order-confirmation-close" onclick="closeConfirm()">Back to Shop</button>
+  </div>
+</div>
+
+<script>
+  var promoApplied = false;
+
+  function normalizeCart(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.map(function(item) {
+      if (!item || typeof item !== 'object') return null;
+      var id = typeof item.id === 'string' ? item.id : 'unknown';
+      var name = typeof item.name === 'string' ? item.name : 'Item';
+      var emoji = typeof item.emoji === 'string' ? item.emoji : '🛍️';
+      var price = Number(item.price);
+      var qty = parseInt(item.qty, 10);
+      if (!Number.isFinite(price) || price < 0) price = 0;
+      if (!Number.isFinite(qty) || qty < 1) qty = 1;
+      return { id: id, name: name, emoji: emoji, price: price, qty: qty };
+    }).filter(Boolean);
+  }
+
+  function getCart() {
+    try { return normalizeCart(JSON.parse(localStorage.getItem('fg_cart') || '[]')); }
+    catch(e) { return []; }
+  }
+
+  function saveCart(c) { localStorage.setItem('fg_cart', JSON.stringify(c)); }
+
+  function calculateTotals(cart) {
+    var sub = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+    var del = sub >= 20 ? 0 : 3.99;
+    var disc = promoApplied ? sub * 0.1 : 0;
+    var tot = sub + del - disc;
+    return { subtotal: sub, delivery: del, discount: disc, total: tot };
+  }
+
+  function renderCart() {
+    var cart = getCart();
+    var container = document.getElementById('cartItems');
+    var subtitle  = document.getElementById('cartSubtitle');
+
+    if (cart.length === 0) {
+      subtitle.textContent = '';
+      container.innerHTML = '<div class="empty-state"><div class="big-emoji">🛒</div><h3>Your cart is empty</h3><p>Add some fresh produce to get started!</p><a href="../" class="btn-shop-now">Shop Now</a></div>';
+      updateSummary([]);
+      return;
+    }
+
+    subtitle.textContent = cart.reduce(function(s,i) { return s + i.qty; }, 0) + ' items';
+    container.innerHTML = '';
+    cart.forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'cart-item';
+
+      var emoji = document.createElement('div');
+      var emojiTheme = { apple: 'item-apple', banana: 'item-banana', peach: 'item-peach' }[item.id] || '';
+      emoji.className = 'item-emoji' + (emojiTheme ? ' ' + emojiTheme : '');
+      emoji.textContent = item.emoji;
+
+      var details = document.createElement('div');
+      details.className = 'item-details';
+      var name = document.createElement('div');
+      name.className = 'item-name';
+      name.textContent = item.name;
+      var price = document.createElement('div');
+      price.className = 'item-price';
+      price.textContent = '$' + item.price.toFixed(2) + ' each';
+      details.appendChild(name);
+      details.appendChild(price);
+
+      var qtyCtrl = document.createElement('div');
+      qtyCtrl.className = 'item-qty-ctrl';
+      var minus = document.createElement('button');
+      minus.className = 'iq-btn btn-decrease-qty';
+      minus.type = 'button';
+      minus.textContent = '−';
+      minus.addEventListener('click', function() { changeItemQty(item.id, -1); });
+      var qtyVal = document.createElement('div');
+      qtyVal.className = 'iq-val';
+      qtyVal.textContent = String(item.qty);
+      var plus = document.createElement('button');
+      plus.className = 'iq-btn btn-increase-qty';
+      plus.type = 'button';
+      plus.textContent = '+';
+      plus.addEventListener('click', function() { changeItemQty(item.id, 1); });
+      qtyCtrl.appendChild(minus);
+      qtyCtrl.appendChild(qtyVal);
+      qtyCtrl.appendChild(plus);
+
+      var total = document.createElement('div');
+      total.className = 'item-total';
+      total.textContent = '$' + (item.price * item.qty).toFixed(2);
+
+      var remove = document.createElement('button');
+      remove.className = 'btn-remove btn-remove-item';
+      remove.type = 'button';
+      remove.textContent = '✕';
+      remove.addEventListener('click', function() { removeItem(item.id); });
+
+      row.appendChild(emoji);
+      row.appendChild(details);
+      row.appendChild(qtyCtrl);
+      row.appendChild(total);
+      row.appendChild(remove);
+      container.appendChild(row);
+    });
+
+    updateSummary(cart);
+  }
+
+  function updateSummary(cart) {
+    var totals = calculateTotals(cart);
+    document.getElementById('subtotal').textContent = '$' + totals.subtotal.toFixed(2);
+    document.getElementById('delivery').textContent = totals.delivery === 0 ? 'Free 🎉' : '$' + totals.delivery.toFixed(2);
+    document.getElementById('discount').textContent = totals.discount > 0 ? '-$' + totals.discount.toFixed(2) : '—';
+    document.getElementById('total').textContent    = '$' + totals.total.toFixed(2);
+  }
+
+  function changeItemQty(id, d) {
+    var cart = getCart();
+    var item = cart.find(function(i) { return i.id === id; });
+    if (!item) return;
+    item.qty += d;
+    if (item.qty <= 0) cart = cart.filter(function(i) { return i.id !== id; });
+    saveCart(cart); renderCart();
+  }
+
+  function removeItem(id) {
+    var cart = getCart().filter(function(i) { return i.id !== id; });
+    saveCart(cart); renderCart();
+  }
+
+  function applyPromo() {
+    var code = document.getElementById('promoInput').value.trim().toUpperCase();
+    if (code === 'FRESH20') {
+      promoApplied = true;
+      renderCart();
+      document.getElementById('promoInput').value = '';
+      document.getElementById('promoInput').placeholder = '✅ FRESH20 applied!';
+    } else {
+      document.getElementById('promoInput').value = '';
+      document.getElementById('promoInput').placeholder = '❌ Invalid code';
+    }
+  }
+
+  function checkout() {
+    var cart = getCart();
+    if (cart.length === 0) return;
+    var totals = calculateTotals(cart);
+    localStorage.removeItem('fg_cart');
+    document.getElementById('confirmOverlay').classList.add('show');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+    window.location.href = '../';
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>

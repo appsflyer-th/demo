@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <script src="../assets/js/gtm-bootstrap.js" defer></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreshGrove – Grocery Store</title>
+  <link rel="stylesheet" href="../assets/css/local-fonts.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d6a4f; --green-dark: #1b4332; --green-light: #d8f3dc;
+      --peach: #f4845f; --yellow: #f7c948;
+      --off: #f8faf8; --black: #0a0a0a; --gray: #6b7280; --white: #fff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--off); color: var(--black); }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(248,250,248,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); text-decoration: none; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-back { font-size: 0.82rem; color: var(--gray); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .nav-back:hover { color: var(--green); }
+    .cart-btn {
+      position: relative; background: var(--green); color: white;
+      border: none; border-radius: 100px; padding: 8px 16px;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      text-decoration: none;
+    }
+    .cart-count {
+      background: var(--yellow); color: var(--black);
+      border-radius: 100px; padding: 1px 6px; font-size: 0.7rem; font-weight: 700;
+    }
+
+    /* HERO BANNER CAROUSEL */
+    .banners {
+      position: relative; overflow: hidden;
+      border-radius: 0 0 24px 24px;
+    }
+    .banner-track {
+      display: flex; transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .banner-slide {
+      min-width: 100%; padding: 64px 28px;
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: center;
+      position: relative; overflow: hidden;
+      min-height: 300px;
+    }
+    @media (min-width: 640px) { .banner-slide { min-height: 380px; padding: 80px 60px; } }
+
+    .banner-slide.b1 { background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%); color: white; }
+    .banner-slide.b2 { background: linear-gradient(135deg, #7b3f00 0%, #c25c1e 100%); color: white; }
+    .banner-slide.b3 { background: linear-gradient(135deg, #1a3c5e 0%, #2e6da4 100%); color: white; }
+
+    .banner-deco {
+      position: absolute; right: -40px; top: -40px;
+      font-size: 10rem; opacity: 0.15; line-height: 1; pointer-events: none;
+      transform: rotate(15deg);
+    }
+    @media (min-width: 640px) { .banner-deco { font-size: 16rem; right: 40px; top: -30px; opacity: 0.2; } }
+
+    .banner-tag {
+      font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      background: rgba(255,255,255,0.25); border-radius: 100px;
+      padding: 4px 12px; margin-bottom: 16px;
+    }
+    .banner-slide h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 5vw, 3.2rem); line-height: 1.1; margin-bottom: 10px;
+      max-width: 450px;
+    }
+    .banner-slide p { opacity: 0.8; font-size: 0.95rem; margin-bottom: 20px; max-width: 380px; line-height: 1.6; }
+    .banner-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 100px;
+      background: white; color: var(--green-dark);
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      text-decoration: none; transition: all 0.2s ease;
+    }
+    .banner-cta:hover { transform: translateY(-2px); }
+
+    .banner-dots {
+      position: absolute; bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 100px;
+      background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;
+    }
+    .dot.active { background: white; width: 20px; }
+
+    /* CATEGORIES */
+    .section { padding: 40px 20px; max-width: 1100px; margin: 0 auto; }
+    .section-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 24px;
+    }
+    .section-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+    }
+    .see-all { font-size: 0.82rem; color: var(--green); text-decoration: none; font-weight: 500; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) { .products-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+
+    .product-card {
+      background: white; border-radius: 16px; overflow: hidden;
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
+      text-decoration: none; color: inherit; display: block;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(45,106,79,0.15); }
+
+    .product-img {
+      width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+    .prod-apple { background: linear-gradient(135deg, #fde8e8, #fdd3d3); }
+    .prod-banana { background: linear-gradient(135deg, #fffde8, #fff3c4); }
+    .prod-peach  { background: linear-gradient(135deg, #fef3e8, #fde0c4); }
+
+    .product-info { padding: 14px 16px 18px; }
+    .product-name {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    .product-weight { font-size: 0.78rem; color: var(--gray); margin-bottom: 10px; }
+    .product-footer {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .product-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--green); }
+    .btn-quick-add {
+      width: 32px; height: 32px; border-radius: 100px;
+      background: var(--green); color: white;
+      border: none; cursor: pointer; font-size: 1.2rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn-quick-add:hover { transform: scale(1.1); background: var(--green-dark); }
+
+    /* PROMO BANNER */
+    .promo-strip {
+      margin: 0 20px 40px;
+      background: var(--green-light); border-radius: 16px;
+      padding: 24px 28px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    @media (min-width: 560px) {
+      .promo-strip { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
+    .promo-text h3 {
+      font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--green-dark);
+    }
+    .promo-text p { font-size: 0.85rem; color: var(--gray); margin-top: 4px; }
+    .btn-promo {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 100px;
+      background: var(--green); color: white;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .btn-promo:hover { background: var(--green-dark); }
+
+    /* FOOTER */
+    footer {
+      background: var(--green-dark); color: white;
+      padding: 48px 24px; text-align: center;
+    }
+    .footer-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; margin-bottom: 8px; }
+    .footer-sub { opacity: 0.65; font-size: 0.9rem; margin-bottom: 32px; }
+    .qr-wrap { display: none; flex-direction: column; align-items: center; gap: 12px; }
+    @media (min-width: 768px) {
+      .qr-wrap { display: flex; }
+      .mobile-download-btns { display: none !important; }
+    }
+    .qr-box {
+      width: 140px; height: 140px; background: white;
+      border-radius: 12px; padding: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qr-box svg { width: 120px; height: 120px; }
+    .qr-label { font-size: 0.8rem; opacity: 0.7; }
+    .mobile-download-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn-download-app {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 100px;
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; border: none; transition: all 0.2s ease;
+    }
+    .btn-app-ios { background: white; color: var(--green-dark); }
+    .btn-app-android { background: var(--yellow); color: var(--black); }
+    .btn-download-app:hover { transform: translateY(-2px); opacity: 0.9; }
+    .footer-copy { margin-top: 32px; font-size: 0.72rem; opacity: 0.4; }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54P6PTRS"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <a class="nav-brand" href="./">🌿 FreshGrove</a>
+  <div class="nav-right">
+    <a class="nav-back" href="../">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 4L3 7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Demo Hub
+    </a>
+    <a href="cart/" class="cart-btn btn-view-cart" id="cart-nav-btn">
+      🛒 Cart <span class="cart-count" id="cart-count">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Hero Banners -->
+<div class="banners">
+  <div class="banner-track" id="bannerTrack">
+    <div class="banner-slide b1">
+      <div class="banner-deco">🍎</div>
+      <div class="banner-tag">Fresh Arrivals</div>
+      <h2>Crisp & Sweet Apples</h2>
+      <p>Hand-picked from local orchards. Crunchy, fresh, and delivered to your door.</p>
+      <a href="product/?id=apple" class="banner-cta btn-banner-shop-apple">Shop Apples →</a>
+    </div>
+    <div class="banner-slide b2">
+      <div class="banner-deco">🍌</div>
+      <div class="banner-tag">Best Seller</div>
+      <h2>Golden Ripe Bananas</h2>
+      <p>Perfectly ripened for the ideal sweetness. Great for smoothies, baking, or snacking.</p>
+      <a href="product/?id=banana" class="banner-cta btn-banner-shop-banana">Shop Bananas →</a>
+    </div>
+    <div class="banner-slide b3">
+      <div class="banner-deco">🍑</div>
+      <div class="banner-tag">Season Special</div>
+      <h2>Velvet Soft Peaches</h2>
+      <p>Summer-season peaches bursting with juice. Limited stock — grab them while fresh!</p>
+      <a href="product/?id=peach" class="banner-cta btn-banner-shop-peach">Shop Peaches →</a>
+    </div>
+  </div>
+  <div class="banner-dots">
+    <div class="dot active" onclick="goSlide(0)"></div>
+    <div class="dot" onclick="goSlide(1)"></div>
+    <div class="dot" onclick="goSlide(2)"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <h2>Our Fresh Picks 🌿</h2>
+    <a href="#" class="see-all">See all</a>
+  </div>
+
+  <div class="products-grid">
+    <!-- Apple -->
+    <a href="product/?id=apple" class="product-card" id="product-card-apple">
+      <div class="product-img prod-apple">🍎</div>
+      <div class="product-info">
+        <div class="product-name">Crisp Apples</div>
+        <div class="product-weight">500g • Organic</div>
+        <div class="product-footer">
+          <div class="product-price">$3.99</div>
+          <button class="btn-quick-add btn-quick-add-apple" onclick="quickAdd(event,'apple',3.99,'🍎','Crisp Apples')">+</button>
+        </div>
+      </div>
+    </a>
+
+    <!-- Banana -->
+    <a href="product/?id=banana" class="product-card" id="product-card-banana">
+      <div class="product-img prod-banana">🍌</div>
+      <div class="product-info">
+        <div class="product-name">Golden Bananas</div>
+        <div class="product-weight">6 pack • Farm Fresh</div>
+        <div class="product-footer">
+          <div class="product-price">$2.49</div>
+          <button class="btn-quick-add btn-quick-add-banana" onclick="quickAdd(event,'banana',2.49,'🍌','Golden Bananas')">+</button>
+        </div>
+      </div>
+    </a>
+
+    <!-- Peach -->
+    <a href="product/?id=peach" class="product-card" id="product-card-peach">
+      <div class="product-img prod-peach">🍑</div>
+      <div class="product-info">
+        <div class="product-name">Velvet Peaches</div>
+        <div class="product-weight">4 pack • Seasonal</div>
+        <div class="product-footer">
+          <div class="product-price">$5.99</div>
+          <button class="btn-quick-add btn-quick-add-peach" onclick="quickAdd(event,'peach',5.99,'🍑','Velvet Peaches')">+</button>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Promo -->
+<div class="promo-strip">
+  <div class="promo-text">
+    <h3>🚚 Free delivery on orders over $20!</h3>
+    <p>Use code FRESH20 at checkout. Limited time offer.</p>
+  </div>
+  <a href="cart/" class="btn-promo btn-promo-delivery">Shop Now</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-title">Order fresh, live fresh 📱</div>
+  <div class="footer-sub">Download FreshGrove app for exclusive deals and faster checkout.</div>
+
+  <div class="qr-wrap">
+    <div class="qr-box">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="white"/>
+        <rect x="5" y="5" width="30" height="30" fill="black"/><rect x="9" y="9" width="22" height="22" fill="white"/><rect x="13" y="13" width="14" height="14" fill="black"/>
+        <rect x="65" y="5" width="30" height="30" fill="black"/><rect x="69" y="9" width="22" height="22" fill="white"/><rect x="73" y="13" width="14" height="14" fill="black"/>
+        <rect x="5" y="65" width="30" height="30" fill="black"/><rect x="9" y="69" width="22" height="22" fill="white"/><rect x="13" y="73" width="14" height="14" fill="black"/>
+        <rect x="40" y="5" width="5" height="5" fill="black"/><rect x="50" y="5" width="5" height="5" fill="black"/>
+        <rect x="40" y="15" width="5" height="5" fill="black"/><rect x="55" y="15" width="5" height="5" fill="black"/>
+        <rect x="40" y="25" width="10" height="5" fill="black"/>
+        <rect x="40" y="40" width="5" height="25" fill="black"/><rect x="50" y="40" width="5" height="5" fill="black"/>
+        <rect x="60" y="40" width="5" height="10" fill="black"/><rect x="70" y="40" width="5" height="5" fill="black"/>
+        <rect x="80" y="40" width="15" height="5" fill="black"/>
+        <rect x="50" y="50" width="15" height="5" fill="black"/><rect x="80" y="50" width="5" height="5" fill="black"/>
+        <rect x="55" y="60" width="5" height="5" fill="black"/><rect x="65" y="60" width="5" height="10" fill="black"/>
+        <rect x="75" y="60" width="10" height="5" fill="black"/><rect x="50" y="70" width="10" height="5" fill="black"/>
+        <rect x="70" y="75" width="5" height="5" fill="black"/><rect x="80" y="70" width="15" height="10" fill="black"/>
+        <rect x="55" y="80" width="5" height="10" fill="black"/><rect x="65" y="85" width="10" height="5" fill="black"/>
+        <rect x="5" y="40" width="5" height="20" fill="black"/><rect x="15" y="40" width="15" height="5" fill="black"/>
+        <rect x="25" y="50" width="10" height="5" fill="black"/><rect x="5" y="60" width="10" height="5" fill="black"/>
+        <rect x="20" y="55" width="5" height="10" fill="black"/><rect x="5" y="70" width="5" height="5" fill="black"/>
+        <rect x="15" y="70" width="10" height="5" fill="black"/><rect x="25" y="65" width="5" height="15" fill="black"/>
+        <rect x="5" y="80" width="15" height="5" fill="black"/><rect x="20" y="80" width="5" height="10" fill="black"/>
+      </svg>
+    </div>
+    <div class="qr-label">Scan to download FreshGrove App</div>
+  </div>
+
+  <div class="mobile-download-btns">
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-ios btn-download-ios-eco" id="btn-ios-eco">🍎 Download on App Store</a>
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-android btn-download-android-eco" id="btn-android-eco">🤖 Get it on Google Play</a>
+  </div>
+
+  <div class="footer-copy">© 2025 FreshGrove Demo</div>
+</footer>
+
+<script>
+  // Banner auto-rotate
+  var current = 0;
+  var slides = document.querySelectorAll('.banner-slide').length;
+  var dots   = document.querySelectorAll('.dot');
+
+  function goSlide(n) {
+    current = n;
+    document.getElementById('bannerTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
+    dots.forEach(function(d,i) { d.classList.toggle('active', i === n); });
+  }
+
+  setInterval(function() { goSlide((current + 1) % slides); }, 4000);
+
+  // Cart (localStorage)
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('fg_cart') || '[]'); } catch(e) { return []; }
+  }
+  function saveCart(c) { localStorage.setItem('fg_cart', JSON.stringify(c)); }
+  function updateCartUI() {
+    var count = getCart().reduce(function(s,i) { return s + i.qty; }, 0);
+    var el = document.getElementById('cart-count');
+    if (el) el.textContent = count;
+  }
+
+  function quickAdd(e, id, price, emoji, name) {
+    e.preventDefault(); e.stopPropagation();
+    var cart = getCart();
+    var item = cart.find(function(i) { return i.id === id; });
+    if (item) { item.qty++; } else { cart.push({ id: id, price: price, emoji: emoji, name: name, qty: 1 }); }
+    saveCart(cart); updateCartUI();
+    var btn = e.target;
+    btn.textContent = '✓';
+    btn.style.background = '#27ae60';
+    setTimeout(function() { btn.textContent = '+'; btn.style.background = ''; }, 1000);
+  }
+
+  updateCartUI();
+</script>
+</body>
+</html>

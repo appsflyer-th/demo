@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="fb-g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFCEDB"/>
+      <stop offset="100%" stop-color="#FF7B9A"/>
+    </linearGradient>
+    <linearGradient id="fb-g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#CFF5DF"/>
+      <stop offset="100%" stop-color="#9AFFC5"/>
+    </linearGradient>
+    <linearGradient id="fb-g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#BBDFFF"/>
+      <stop offset="100%" stop-color="#89C6FD"/>
+    </linearGradient>
+    <linearGradient id="fb-g4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF7B9A"/>
+      <stop offset="100%" stop-color="#FF7667"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="6" y="6" width="24" height="24" rx="6" fill="url(#fb-g1)"/>
+  <rect x="34" y="6" width="24" height="24" rx="6" fill="url(#fb-g2)"/>
+  <rect x="6" y="34" width="24" height="24" rx="6" fill="url(#fb-g3)"/>
+  <rect x="34" y="34" width="24" height="24" rx="6" fill="url(#fb-g4)"/>
+</svg>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <script src="../../assets/js/gtm-bootstrap.js" defer></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreshGrove – Product</title>
+  <link rel="stylesheet" href="../../assets/css/local-fonts.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d6a4f; --green-dark: #1b4332; --green-light: #d8f3dc;
+      --yellow: #f7c948; --off: #f8faf8; --black: #0a0a0a; --gray: #6b7280; --white: #fff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--off); color: var(--black); }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(248,250,248,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); text-decoration: none; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .nav-back { font-size: 0.82rem; color: var(--gray); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .nav-back:hover { color: var(--green); }
+    .cart-btn {
+      position: relative; background: var(--green); color: white;
+      border: none; border-radius: 100px; padding: 8px 16px;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
+    }
+    .cart-count { background: var(--yellow); color: var(--black); border-radius: 100px; padding: 1px 6px; font-size: 0.7rem; font-weight: 700; }
+
+    /* PRODUCT LAYOUT */
+    .product-layout {
+      max-width: 900px; margin: 0 auto; padding: 32px 20px;
+      display: grid; grid-template-columns: 1fr; gap: 32px;
+    }
+    @media (min-width: 640px) {
+      .product-layout { grid-template-columns: 1fr 1fr; align-items: start; }
+    }
+
+    .product-visual {
+      border-radius: 24px;
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 8rem; line-height: 1;
+      position: relative; overflow: hidden;
+    }
+    .vis-apple  { background: linear-gradient(135deg, #fde8e8, #fcc3c3); }
+    .vis-banana { background: linear-gradient(135deg, #fffde8, #fff3c4); }
+    .vis-peach  { background: linear-gradient(135deg, #fef3e8, #fde0c4); }
+
+    .product-badge {
+      position: absolute; top: 16px; left: 16px;
+      font-family: 'Syne', sans-serif; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--green); color: white;
+      padding: 4px 10px; border-radius: 100px;
+    }
+
+    .product-details { display: flex; flex-direction: column; gap: 16px; }
+    .product-category {
+      font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--green);
+    }
+    .product-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15;
+    }
+    .product-subtitle { color: var(--gray); font-size: 0.9rem; line-height: 1.6; }
+
+    .product-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .meta-pill {
+      background: white; border-radius: 100px; padding: 6px 14px;
+      font-size: 0.8rem; color: var(--gray);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .price-row {
+      display: flex; align-items: baseline; gap: 10px;
+    }
+    .price-main { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--green); }
+    .price-per { font-size: 0.85rem; color: var(--gray); }
+
+    /* Quantity */
+    .qty-row { display: flex; align-items: center; gap: 16px; }
+    .qty-label { font-size: 0.85rem; color: var(--gray); }
+    .qty-ctrl {
+      display: flex; align-items: center;
+      background: white; border-radius: 100px;
+      border: 1px solid rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 36px; height: 36px; border: none; background: none;
+      cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .qty-btn:hover { background: var(--green-light); }
+    .qty-val { min-width: 32px; text-align: center; font-family: 'Syne', sans-serif; font-weight: 700; }
+
+    /* ACTION BUTTONS */
+    .action-btns { display: flex; flex-direction: column; gap: 10px; }
+    @media (min-width: 400px) { .action-btns { flex-direction: row; } }
+
+    .btn-add-to-cart {
+      flex: 1; padding: 15px 24px; border-radius: 100px;
+      background: var(--green-light); color: var(--green-dark);
+      border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+    .btn-add-to-cart:hover { background: var(--green); color: white; }
+
+    .btn-buy-now {
+      flex: 1; padding: 15px 24px; border-radius: 100px;
+      background: var(--green); color: white;
+      border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      transition: all 0.2s ease; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-buy-now:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    /* BUY NOW QR POPUP (desktop) */
+    .buy-qr-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 320;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.52);
+      backdrop-filter: blur(4px);
+    }
+    .buy-qr-popup.show { display: flex; }
+    .buy-qr-card {
+      width: min(360px, 100%);
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      padding: 22px 20px 18px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.22);
+    }
+    .buy-qr-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid #d9e4f2;
+      background: #f8fbff;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .buy-qr-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .buy-qr-sub {
+      font-size: 0.84rem;
+      color: #64748b;
+      margin-bottom: 14px;
+    }
+    .buy-qr-box {
+      width: 190px;
+      height: 190px;
+      margin: 0 auto 14px;
+      border-radius: 14px;
+      border: 1px solid #d9e4f2;
+      background: #ffffff;
+      padding: 10px;
+    }
+    .buy-qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .buy-qr-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 182px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      border: 1px solid #d9e4f2;
+      background: #f8fbff;
+      color: #0b2a57;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    /* RELATED / INFO */
+    .info-strips {
+      max-width: 900px; margin: 0 auto; padding: 0 20px 48px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 500px) { .info-strips { grid-template-columns: 1fr; } }
+
+    .info-strip {
+      background: white; border-radius: 14px; padding: 18px;
+      text-align: center;
+    }
+    .info-strip .icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .info-strip h4 { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; }
+    .info-strip p { font-size: 0.75rem; color: var(--gray); }
+
+    /* FOOTER */
+    footer { background: var(--green-dark); color: white; padding: 48px 24px; text-align: center; }
+    .footer-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; margin-bottom: 8px; }
+    .footer-sub { opacity: 0.65; font-size: 0.9rem; margin-bottom: 32px; }
+    .qr-wrap { display: none; flex-direction: column; align-items: center; gap: 12px; }
+    @media (min-width: 768px) {
+      .qr-wrap { display: flex; }
+      .mobile-download-btns { display: none !important; }
+    }
+    .qr-box { width: 140px; height: 140px; background: white; border-radius: 12px; padding: 10px; display: flex; align-items: center; justify-content: center; }
+    .qr-box svg { width: 120px; height: 120px; }
+    .qr-label { font-size: 0.8rem; opacity: 0.7; }
+    .mobile-download-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn-download-app { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 100px; font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s ease; }
+    .btn-app-ios { background: white; color: var(--green-dark); }
+    .btn-app-android { background: var(--yellow); color: var(--black); }
+    .btn-download-app:hover { transform: translateY(-2px); opacity: 0.9; }
+    .footer-copy { margin-top: 32px; font-size: 0.72rem; opacity: 0.4; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--green-dark); color: white;
+      padding: 12px 24px; border-radius: 100px; font-size: 0.88rem;
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      z-index: 200; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-54P6PTRS"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <a class="nav-brand" href="../">🌿 FreshGrove</a>
+  <div class="nav-right">
+    <a class="nav-back" href="../">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 4L3 7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </a>
+    <a href="../cart/" class="cart-btn btn-view-cart">
+      🛒 Cart <span class="cart-count" id="cart-count">0</span>
+    </a>
+  </div>
+</nav>
+
+<div class="product-layout">
+  <div class="product-visual" id="productVisual">
+    <div class="product-badge" id="productBadge">Organic</div>
+    <span id="productEmoji">🍎</span>
+  </div>
+
+  <div class="product-details">
+    <div class="product-category" id="productCategory">Fresh Fruits</div>
+    <div class="product-title" id="productTitle">Crisp Apples</div>
+    <div class="product-subtitle" id="productSubtitle">Hand-picked from local orchards, our crisp apples are packed with natural sweetness and crunch. Perfect for snacking, baking, or adding to salads.</div>
+
+    <div class="product-meta">
+      <div class="meta-pill" id="metaWeight">500g</div>
+      <div class="meta-pill">🌿 Certified Organic</div>
+      <div class="meta-pill">⚡ In Stock</div>
+    </div>
+
+    <div class="price-row">
+      <div class="price-main" id="productPrice">$3.99</div>
+      <div class="price-per" id="productPer">per 500g</div>
+    </div>
+
+    <div class="qty-row">
+      <div class="qty-label">Qty:</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-val" id="qtyDisplay">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <button class="btn-add-to-cart" id="btn-add-to-cart" onclick="addToCart()">🛒 Add to Cart</button>
+      <a href="#" class="btn-buy-now" id="btn-buy-now">⚡ Buy Now</a>
+    </div>
+  </div>
+</div>
+
+<div class="info-strips">
+  <div class="info-strip">
+    <div class="icon">🚚</div>
+    <h4>Fast Delivery</h4>
+    <p>Same day or next day delivery available</p>
+  </div>
+  <div class="info-strip">
+    <div class="icon">✅</div>
+    <h4>Quality Guaranteed</h4>
+    <p>Freshness promise on every order</p>
+  </div>
+  <div class="info-strip">
+    <div class="icon">♻️</div>
+    <h4>Eco Packaging</h4>
+    <p>100% recyclable and biodegradable</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-title">Shop smarter on the app 📱</div>
+  <div class="footer-sub">Download FreshGrove for app-only deals and one-tap reordering.</div>
+
+  <div class="qr-wrap">
+    <div class="qr-box">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="white"/>
+        <rect x="5" y="5" width="30" height="30" fill="black"/><rect x="9" y="9" width="22" height="22" fill="white"/><rect x="13" y="13" width="14" height="14" fill="black"/>
+        <rect x="65" y="5" width="30" height="30" fill="black"/><rect x="69" y="9" width="22" height="22" fill="white"/><rect x="73" y="13" width="14" height="14" fill="black"/>
+        <rect x="5" y="65" width="30" height="30" fill="black"/><rect x="9" y="69" width="22" height="22" fill="white"/><rect x="13" y="73" width="14" height="14" fill="black"/>
+        <rect x="40" y="5" width="5" height="5" fill="black"/><rect x="50" y="5" width="5" height="5" fill="black"/>
+        <rect x="40" y="15" width="5" height="5" fill="black"/><rect x="55" y="15" width="5" height="5" fill="black"/>
+        <rect x="40" y="25" width="10" height="5" fill="black"/>
+        <rect x="40" y="40" width="5" height="25" fill="black"/><rect x="50" y="40" width="5" height="5" fill="black"/>
+        <rect x="60" y="40" width="5" height="10" fill="black"/><rect x="80" y="40" width="15" height="5" fill="black"/>
+        <rect x="50" y="50" width="15" height="5" fill="black"/><rect x="55" y="60" width="5" height="5" fill="black"/>
+        <rect x="65" y="60" width="5" height="10" fill="black"/><rect x="75" y="60" width="10" height="5" fill="black"/>
+        <rect x="50" y="70" width="10" height="5" fill="black"/><rect x="80" y="70" width="15" height="10" fill="black"/>
+        <rect x="55" y="80" width="5" height="10" fill="black"/><rect x="65" y="85" width="10" height="5" fill="black"/>
+        <rect x="5" y="40" width="5" height="20" fill="black"/><rect x="15" y="40" width="15" height="5" fill="black"/>
+        <rect x="25" y="50" width="10" height="5" fill="black"/><rect x="5" y="60" width="10" height="5" fill="black"/>
+        <rect x="5" y="70" width="5" height="5" fill="black"/><rect x="15" y="70" width="10" height="5" fill="black"/>
+        <rect x="25" y="65" width="5" height="15" fill="black"/><rect x="5" y="80" width="15" height="5" fill="black"/>
+      </svg>
+    </div>
+    <div class="qr-label">Scan to download FreshGrove App</div>
+  </div>
+
+  <div class="mobile-download-btns">
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-ios btn-download-ios-product" id="btn-ios-product">🍎 Download on App Store</a>
+    <a href="https://freshgrove.onelink.me/xxxx" class="btn-download-app btn-app-android btn-download-android-product" id="btn-android-product">🤖 Get it on Google Play</a>
+  </div>
+
+  <div class="footer-copy">© 2025 FreshGrove Demo</div>
+</footer>
+
+<div class="toast" id="toast">✅ Added to cart!</div>
+
+<div class="buy-qr-popup" id="buy-qr-popup" aria-hidden="true">
+  <div class="buy-qr-card" role="dialog" aria-modal="true" aria-labelledby="buy-qr-title">
+    <button class="buy-qr-close" type="button" id="buy-qr-close" aria-label="Close QR popup">×</button>
+    <div class="buy-qr-title" id="buy-qr-title">Scan to buy in app</div>
+    <div class="buy-qr-sub">Open FreshGrove app on your phone to continue checkout.</div>
+    <div class="buy-qr-box">
+      <img src="../../assets/image/qr_code_apples.png" alt="QR code for product buy now" id="buy-qr-image">
+    </div>
+    <a class="buy-qr-link" id="buy-qr-link" href="https://onelink-sim.onelink.me/coiD/tknc1c54">Open direct link</a>
+  </div>
+</div>
+
+<script>
+  var products = {
+    apple:  { emoji:'🍎', title:'Crisp Apples',    category:'Fresh Fruits', subtitle:'Hand-picked from local orchards, crisp apples packed with natural sweetness and crunch. Perfect for snacking, baking, or adding to salads.', price:3.99, per:'per 500g', weight:'500g', badge:'Organic',  vis:'vis-apple',  deepLink:'product_apple'  },
+    banana: { emoji:'🍌', title:'Golden Bananas',  category:'Fresh Fruits', subtitle:'Perfectly ripened golden bananas, ideal for smoothies, breakfast bowls, or a quick energy-boosting snack on the go.', price:2.49, per:'per 6-pack', weight:'6 pack', badge:'Farm Fresh', vis:'vis-banana', deepLink:'product_banana' },
+    peach:  { emoji:'🍑', title:'Velvet Peaches',  category:'Seasonal Fruit', subtitle:'Limited-season velvet peaches bursting with sweet, juicy flavor. Sourced from sustainable farms — grab them before they\'re gone!', price:5.99, per:'per 4-pack', weight:'4 pack', badge:'Seasonal',  vis:'vis-peach',  deepLink:'product_peach'  }
+  };
+
+  var params = new URLSearchParams(window.location.search);
+  var id     = params.get('id') || 'apple';
+  var p      = products[id] || products.apple;
+  var qty    = 1;
+  var buyNowLinks = {
+    apple: 'https://onelink-sim.onelink.me/coiD/tknc1c54',
+    banana: 'https://onelink-sim.onelink.me/coiD/qnnw8c06',
+    peach: 'https://onelink-sim.onelink.me/coiD/f9prgj5x'
+  };
+  var buyNowQr = {
+    apple: '../../assets/image/qr_code_apples.png',
+    banana: '../../assets/image/qr_code_bananas.png',
+    peach: '../../assets/image/qr_code_peaches.png'
+  };
+  var buyNowLink = buyNowLinks[id] || buyNowLinks.apple;
+
+  // Populate
+  document.getElementById('productEmoji').textContent    = p.emoji;
+  document.getElementById('productVisual').className     = 'product-visual ' + p.vis;
+  document.getElementById('productBadge').textContent    = p.badge;
+  document.getElementById('productCategory').textContent = p.category;
+  document.getElementById('productTitle').textContent    = p.title;
+  document.getElementById('productSubtitle').textContent = p.subtitle;
+  document.getElementById('productPrice').textContent    = '$' + p.price.toFixed(2);
+  document.getElementById('productPer').textContent      = p.per;
+  document.getElementById('metaWeight').textContent      = p.weight;
+  document.title = 'FreshGrove – ' + p.title;
+  document.getElementById('btn-buy-now').href = buyNowLink;
+
+  function changeQty(d) {
+    qty = Math.max(1, qty + d);
+    document.getElementById('qtyDisplay').textContent = qty;
+  }
+
+  function getCart() { try { return JSON.parse(localStorage.getItem('fg_cart') || '[]'); } catch(e) { return []; } }
+  function saveCart(c) { localStorage.setItem('fg_cart', JSON.stringify(c)); }
+  function updateCartUI() {
+    var count = getCart().reduce(function(s,i) { return s + i.qty; }, 0);
+    var el = document.getElementById('cart-count');
+    if (el) el.textContent = count;
+  }
+
+  function addToCart() {
+    var cart = getCart();
+    var item = cart.find(function(i) { return i.id === id; });
+    if (item) { item.qty += qty; } else { cart.push({ id: id, price: p.price, emoji: p.emoji, name: p.title, qty: qty }); }
+    saveCart(cart); updateCartUI();
+    showToast('✅ ' + p.title + ' added to cart!');
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  (function setupBuyNowQr() {
+    var buyNowBtn = document.getElementById('btn-buy-now');
+    var popup = document.getElementById('buy-qr-popup');
+    var closeBtn = document.getElementById('buy-qr-close');
+    var popupLink = document.getElementById('buy-qr-link');
+    var popupImage = document.getElementById('buy-qr-image');
+    var desktopQuery = window.matchMedia('(min-width: 768px)');
+    if (!buyNowBtn || !popup || !popupLink || !popupImage) return;
+
+    popupLink.href = buyNowLink;
+    popupImage.src = buyNowQr[id] || buyNowQr.apple;
+
+    function openPopup() {
+      popup.classList.add('show');
+      popup.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup() {
+      popup.classList.remove('show');
+      popup.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    buyNowBtn.addEventListener('click', function(event) {
+      if (!desktopQuery.matches) return;
+      event.preventDefault();
+      openPopup();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closePopup);
+    popup.addEventListener('click', function(event) {
+      if (event.target === popup) closePopup();
+    });
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && popup.classList.contains('show')) closePopup();
+    });
+  })();
+
+  updateCartUI();
+</script>
+
+</body>
+</html>
