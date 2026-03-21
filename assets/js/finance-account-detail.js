@@ -4,7 +4,6 @@
   var type = document.body.getAttribute('data-account-key') || 'apple';
   var account = accounts[type] || accounts.apple;
   var appLinks = appConfig.accountLinks || {};
-  var qrImages = appConfig.accountQr || {};
   var linkIds = {
     apple: 'apple_link',
     banana: 'banana_link',
@@ -14,11 +13,6 @@
     apple: 'apple_qr_link',
     banana: 'banana_qr_link',
     peach: 'peach_qr_link'
-  };
-  var qrImageIds = {
-    apple: 'apple_qr',
-    banana: 'banana_qr',
-    peach: 'peach_qr'
   };
   var appDownloadLink = appLinks[type] || appLinks.apple;
   if (!account) return;
@@ -55,7 +49,6 @@
   if (applyBtn && appDownloadLink) applyBtn.href = appDownloadLink;
 
   var ctaQrLink = document.getElementById(qrLinkIds[type]);
-  var ctaQrImage = document.getElementById(qrImageIds[type]);
   var desktopQuery = window.matchMedia('(min-width: 768px)');
 
   function syncQrLinkState() {
@@ -80,5 +73,4 @@
     desktopQuery.addListener(syncQrLinkState);
   }
 
-  if (ctaQrImage) ctaQrImage.src = qrImages[type] || qrImages.apple || appConfig.defaultQr || ctaQrImage.src;
 })();
