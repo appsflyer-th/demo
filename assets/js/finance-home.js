@@ -1,8 +1,6 @@
 (function() {
   var appConfig = window.FruitBankAppConfig || {};
   var accountLinks = appConfig.accountLinks || {};
-  var accountQr = appConfig.accountQr || {};
-  var defaultQr = appConfig.defaultQr || '../assets/image/qr_code.png';
   var idToAccount = {
     apple_link: 'apple',
     banana_link: 'banana',
@@ -16,7 +14,6 @@
 
     var link = accountLinks[accountKey];
     if (link) button.href = link;
-    button.setAttribute('data-qr', accountQr[accountKey] || defaultQr);
   });
 })();
 
@@ -129,17 +126,34 @@
   var popup = document.getElementById('qr-popup');
   if (!popup) return;
 
-  var appConfig = window.FruitBankAppConfig || {};
-  var defaultQr = appConfig.defaultQr || '../assets/image/qr_code.png';
   var closeBtn = document.getElementById('qr-popup-close');
   var popupLink = document.getElementById('qr-popup-link');
-  var popupImage = document.getElementById('qr-popup-image');
+  var popupCodeDiv = document.getElementById('qr-popup-code-div');
   var triggers = Array.prototype.slice.call(document.querySelectorAll('.js-qr-popup-trigger'));
   var desktopQuery = window.matchMedia('(min-width: 768px)');
 
-  function openPopup(link, qrSrc) {
-    if (popupLink && link) popupLink.href = link;
-    if (popupImage) popupImage.src = qrSrc || defaultQr;
+  function renderQr(link) {
+    if (!popupCodeDiv || !link) return;
+    popupCodeDiv.innerHTML = '';
+
+    if (window.AF_SMART_SCRIPT && window.AF_SMART_SCRIPT.displayQrCode) {
+      window.AF_SMART_SCRIPT_RESULT = { clickURL: link };
+      window.AF_SMART_SCRIPT.displayQrCode('qr-popup-code-div');
+      return;
+    }
+
+    var fallbackImg = document.createElement('img');
+    fallbackImg.alt = 'QR code for app download';
+    fallbackImg.style.width = '100%';
+    fallbackImg.style.height = '100%';
+    fallbackImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=' + encodeURIComponent(link);
+    popupCodeDiv.appendChild(fallbackImg);
+  }
+
+  function openPopup(link) {
+    if (!link) return;
+    if (popupLink) popupLink.href = link;
+    renderQr(link);
     popup.classList.add('show');
     popup.setAttribute('aria-hidden', 'false');
     document.body.classList.add('qr-popup-open');
@@ -155,7 +169,7 @@
     trigger.addEventListener('click', function(event) {
       if (!desktopQuery.matches) return;
       event.preventDefault();
-      openPopup(trigger.getAttribute('href'), trigger.getAttribute('data-qr'));
+      openPopup(trigger.getAttribute('href'));
     });
   });
 
