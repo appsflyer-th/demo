@@ -634,9 +634,13 @@
       padding: 10px;
       display: flex; align-items: center; justify-content: center;
     }
-    .qr-box img {
+    #download_qr_code_div {
       width: 120px;
       height: 120px;
+    }
+    #download_qr_code_div canvas {
+      width: 120px !important;
+      height: 120px !important;
       object-fit: contain;
       display: block;
     }
