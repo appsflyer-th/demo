@@ -163,13 +163,7 @@
   function renderQr(link) {
     if (!popupCodeDiv || !link) return;
     popupCodeDiv.innerHTML = '';
-
-    if (window.AF_SMART_SCRIPT && window.AF_SMART_SCRIPT.displayQrCode) {
-      window.AF_SMART_SCRIPT_RESULT = { clickURL: link };
-      window.AF_SMART_SCRIPT.displayQrCode('qr-popup-code-div');
-      return;
-    }
-
+    // Render from the exact clicked URL so popup QR always matches card link params.
     var fallbackImg = document.createElement('img');
     fallbackImg.alt = 'QR code for app download';
     fallbackImg.style.width = '100%';
