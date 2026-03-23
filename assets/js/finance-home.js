@@ -30,6 +30,12 @@
   var resizeTimer = null;
   var intervalMs = 5200;
 
+  function scheduleHeightSync() {
+    window.requestAnimationFrame(function() {
+      window.requestAnimationFrame(syncSlideHeights);
+    });
+  }
+
   function ensureSlideImage(index) {
     var slide = slides[index];
     if (!slide) return;
@@ -42,6 +48,9 @@
   function syncSlideHeights() {
     var maxHeight = 0;
     var activeSlide = slides[current] || slides[0];
+    var stage = slider.querySelector('.promo-stage');
+
+    if (!stage || !slides.length) return;
 
     slides.forEach(function(slide) {
       var wasActive = slide.classList.contains('is-active');
@@ -53,7 +62,7 @@
     });
 
     if (activeSlide) activeSlide.classList.add('is-active');
-    slider.querySelector('.promo-stage').style.height = maxHeight + 'px';
+    if (maxHeight > 0) stage.style.height = maxHeight + 'px';
   }
 
   function showSlide(nextIndex) {
@@ -112,13 +121,33 @@
   slider.addEventListener('focusout', startAuto);
   window.addEventListener('resize', function() {
     window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(syncSlideHeights, 140);
+    resizeTimer = window.setTimeout(scheduleHeightSync, 140);
   });
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleHeightSync);
+  }
+
+  slides.forEach(function(slide) {
+    var image = slide.querySelector('img');
+    if (!image) return;
+    if (image.complete) return;
+    image.addEventListener('load', scheduleHeightSync, { once: true });
+  });
+
+  window.addEventListener('load', scheduleHeightSync);
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleHeightSync).catch(function() {});
+  }
 
   showSlide(0);
   // Preload next slide image right after first render for smoother first transition.
   ensureSlideImage(1);
-  syncSlideHeights();
+  scheduleHeightSync();
+  window.setTimeout(scheduleHeightSync, 180);
+  window.setTimeout(scheduleHeightSync, 600);
+  window.setTimeout(scheduleHeightSync, 1400);
   startAuto();
 })();
 
