@@ -29,7 +29,12 @@
       afCustom: [af_dp, is_retargeting, custom_ss_ui, custom_ss_gtm_ui]
     };
 
-    if (deepValue) params.deepLinkValue = { defaultValue: deepValue };
+    if (deepValue) {
+      params.deepLinkValue = { defaultValue: deepValue };
+      params.afCustom = params.afCustom.concat([
+        { paramKey: 'deep_link_value', defaultValue: deepValue }
+      ]);
+    }
 
     return window.AF_SMART_SCRIPT.generateOneLinkURL({
       oneLinkURL: oneLinkURL,
