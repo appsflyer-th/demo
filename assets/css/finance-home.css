@@ -38,7 +38,7 @@
       border-radius: 22px;
       border: 1px solid #c8d8ee;
       color: #f8fbff;
-      padding: 34px 58px 16px;
+      padding: 34px 58px;
       position: relative;
       display: none;
       grid-template-columns: 1fr;
@@ -169,7 +169,7 @@
       border: none;
       overflow: visible;
       min-height: 276px;
-      align-self: flex-end;
+      align-self: center;
       background: transparent;
       display: flex;
       align-items: flex-end;
@@ -184,15 +184,22 @@
       object-position: right bottom;
       filter: drop-shadow(0 14px 26px rgba(3, 14, 34, 0.28));
     }
-    .slide-1 .promo-visual { transform: none; }
+    .slide-1 .promo-visual {
+      transform: translateY(10px);
+    }
     .slide-2 .promo-visual {
       justify-content: flex-start;
     }
-    .slide-2 .promo-visual img { object-position: left bottom; transform: none; }
+    .slide-2 .promo-visual img {
+      object-position: left bottom;
+      transform: translate(-8px, 8px);
+    }
     .slide-3 .promo-visual {
       justify-content: flex-end;
     }
-    .slide-3 .promo-visual img { transform: none; }
+    .slide-3 .promo-visual img {
+      transform: translateY(8px);
+    }
     .promo-nav {
       position: absolute;
       inset: 0;
