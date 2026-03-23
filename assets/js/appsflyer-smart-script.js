@@ -19,7 +19,6 @@
   var custom_ss_gtm_ui = { paramKey: 'af_ss_gtm_ui', defaultValue: 'true' };
 
   function generateResult(deepValue) {
-    // Build params once per deeplink value to keep URL generation consistent.
     var params = {
       mediaSource: mediaSource,
       campaign: campaign,
@@ -48,7 +47,6 @@
   }
 
   function drawQr(divId, result) {
-    // Smart Script QR rendering uses AF_SMART_SCRIPT_RESULT as implicit input.
     var div = document.getElementById(divId);
     if (!div || !result || !result.clickURL) return;
     div.innerHTML = '';
@@ -57,9 +55,9 @@
   }
 
   function run() {
-    // Home-level links and QR codes.
     if (!window.AF_SMART_SCRIPT || !window.AF_SMART_SCRIPT.generateOneLinkURL) return;
 
+    // Home
     var rApple = generateResult('apples');
     var rBanana = generateResult('bananas');
     var rPeach = generateResult('peaches');
@@ -70,20 +68,20 @@
     setHref('banana_link', rBanana && rBanana.clickURL);
     setHref('peach_link', rPeach && rPeach.clickURL);
 
-    drawQr('download_qr_code_div', rDownload);
     drawQr('apple_qr_code_div', rApple);
     drawQr('banana_qr_code_div', rBanana);
     drawQr('peach_qr_code_div', rPeach);
+    drawQr('download_qr_code_div', rDownload);
 
-    // Account page override by data-account-key.
+    // Account page auto
     var key = (document.body && document.body.getAttribute('data-account-key')) || '';
     var deep = deepMap[key];
-    if (!deep) return;
-
-    var result = generateResult(deep);
-    setHref(key + '_link', result && result.clickURL);
-    setHref(key + '_qr_link', result && result.clickURL);
-    drawQr(key + '_qr_code_div', result);
+    if (deep) {
+      var result = generateResult(deep);
+      setHref(key + '_link', result && result.clickURL);
+      setHref(key + '_qr_link', result && result.clickURL);
+      drawQr(key + '_qr_code_div', result);
+    }
   }
 
   function loadAndRun() {
