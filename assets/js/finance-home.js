@@ -127,7 +127,6 @@
   if (!popup) return;
 
   var closeBtn = document.getElementById('qr-popup-close');
-  var popupLink = document.getElementById('qr-popup-link');
   var popupCodeDiv = document.getElementById('qr-popup-code-div');
   var triggers = Array.prototype.slice.call(document.querySelectorAll('.js-qr-popup-trigger'));
   var desktopQuery = window.matchMedia('(min-width: 768px)');
@@ -152,7 +151,6 @@
 
   function openPopup(link) {
     if (!link) return;
-    if (popupLink) popupLink.href = link;
     renderQr(link);
     popup.classList.add('show');
     popup.setAttribute('aria-hidden', 'false');

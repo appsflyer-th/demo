@@ -727,20 +727,4 @@
       height: 100% !important;
       display: block;
     }
-    .qr-popup-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 182px;
-      border-radius: 999px;
-      padding: 10px 14px;
-      border: 1px solid #d9e4f2;
-      background: #f8fbff;
-      color: #0b2a57;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      text-decoration: none;
-    }
     body.qr-popup-open { overflow: hidden; }
